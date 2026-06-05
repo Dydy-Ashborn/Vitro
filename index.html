@@ -364,6 +364,10 @@
         .month-nav { background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; padding: 4px 8px; transition: color 0.15s; }
         .month-nav:hover { color: var(--text); }
         .month-name { font-size: 0.88rem; font-weight: 700; letter-spacing: -0.01em; }
+
+        /* ADD CLIENT BTN */
+        .add-client-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(26,159,212,0.2), rgba(26,159,212,0.1)); border: 1px solid rgba(26,159,212,0.4); border-radius: 12px; color: var(--accent); font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .add-client-btn:hover { background: linear-gradient(135deg, rgba(26,159,212,0.3), rgba(26,159,212,0.15)); }
         @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .pop { animation: pop 0.18s ease-out; }
     </style>
@@ -652,36 +656,48 @@
 <div id="page-clients" class="page">
 <div class="clients-layout">
 
-    <div class="clients-section-label">Nouveau client</div>
-    <div class="client-form-card">
-        <div class="form-grid">
-            <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" id="f-prenom" type="text" placeholder="Jean"></div>
-            <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="f-nom" type="text" placeholder="Dupont"></div>
-            <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="f-tel" type="tel" placeholder="06 12 34 56 78"></div>
-            <div class="form-group"><label class="form-label">Adresse</label><input class="form-input" id="f-adresse" type="text" placeholder="12 rue des Alpes"></div>
+    <button class="add-client-btn" onclick="openNewClientModal()">
+        <i class="fas fa-user-plus"></i> Ajouter un client
+    </button>
+
+<!-- NEW CLIENT MODAL -->
+<div class="modal-overlay" id="new-client-modal">
+    <div class="modal" style="max-height:90vh;overflow-y:auto">
+        <div class="modal-header">
+            <div class="modal-title">Nouveau client</div>
+            <button class="modal-close" onclick="closeNewClientModal()"><i class="fas fa-xmark"></i></button>
         </div>
-        <div class="rdv-section">
-            <div class="rdv-title">Rendez-vous</div>
-            <div class="rdv-grid">
-                <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="f-date" type="date"></div>
-                <div class="form-group"><label class="form-label">Heure</label><input class="form-input" id="f-heure" type="time"></div>
+        <div style="padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+            <div class="form-grid" style="padding:0">
+                <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" id="f-prenom" type="text" placeholder="Jean"></div>
+                <div class="form-group"><label class="form-label">Nom</label><input class="form-input" id="f-nom" type="text" placeholder="Dupont"></div>
+                <div class="form-group"><label class="form-label">Téléphone</label><input class="form-input" id="f-tel" type="tel" placeholder="06 12 34 56 78"></div>
+                <div class="form-group"><label class="form-label">Adresse</label><input class="form-input" id="f-adresse" type="text" placeholder="12 rue des Alpes"></div>
+            </div>
+            <div>
+                <div class="rdv-title" style="padding:0 0 10px">Rendez-vous</div>
+                <div class="rdv-grid">
+                    <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="f-date" type="date"></div>
+                    <div class="form-group"><label class="form-label">Heure</label><input class="form-input" id="f-heure" type="time"></div>
+                </div>
+            </div>
+            <div class="devis-badge" id="devis-badge">
+                <span class="devis-badge-empty">Aucun devis — calculez d'abord</span>
+            </div>
+            <div class="ics-row" style="padding:0">
+                <div><div class="ics-label">Ajouter au calendrier iPhone</div><div class="ics-sub">Génère un fichier .ics à ouvrir</div></div>
+                <label class="toggle-wrap"><input type="checkbox" id="f-ics" checked><span class="toggle-slider"></span></label>
+            </div>
+            <div>
+                <div class="notes-label" style="margin-bottom:6px">Notes chantier</div>
+                <textarea class="notes-input" id="f-notes" placeholder="Code portail, chien, accès difficile..."></textarea>
             </div>
         </div>
-        <div class="devis-badge" id="devis-badge">
-            <span class="devis-badge-empty">Aucun devis — calculez d'abord</span>
-        </div>
-        <div style="padding: 0 16px 0;">
-            <div class="notes-label" style="margin-bottom:6px">Notes chantier</div>
-            <textarea class="notes-input" id="f-notes" placeholder="Code portail, chien, accès difficile..."></textarea>
-        </div>
-        <div class="ics-row">
-            <div><div class="ics-label">Ajouter au calendrier iPhone</div><div class="ics-sub">Génère un fichier .ics à ouvrir</div></div>
-            <label class="toggle-wrap"><input type="checkbox" id="f-ics" checked><span class="toggle-slider"></span></label>
-        </div>
-        <div style="padding: 0 16px 16px;">
-            <button class="btn-save" onclick="saveClient()"><i class="fas fa-user-plus"></i> Enregistrer le client</button>
+        <div class="modal-footer">
+            <button class="btn-modal-save" onclick="saveClient()"><i class="fas fa-user-plus"></i> Enregistrer</button>
         </div>
     </div>
+</div>
 
     <div class="clients-section-label" style="margin-top:8px">Clients enregistrés</div>
     <div id="client-list" style="display:flex;flex-direction:column;gap:10px"></div>
@@ -1488,6 +1504,26 @@ function saveNotes(id) {
     clients[idx].notes = val.value.trim();
     saveClients(clients);
     showToast('Notes sauvegardees', 'success');
+}
+
+
+// -- NEW CLIENT MODAL -------------------------------------
+function openNewClientModal() {
+    loadDevisBadge();
+    document.getElementById('new-client-modal').classList.add('open');
+}
+function closeNewClientModal() {
+    document.getElementById('new-client-modal').classList.remove('open');
+}
+
+
+// -- NEW CLIENT MODAL -------------------------------------
+function openNewClientModal() {
+    loadDevisBadge();
+    document.getElementById('new-client-modal').classList.add('open');
+}
+function closeNewClientModal() {
+    document.getElementById('new-client-modal').classList.remove('open');
 }
 
 // -- EDIT MODAL -------------------------------------------
