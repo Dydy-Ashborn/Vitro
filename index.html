@@ -660,7 +660,7 @@
     </div>
 
     <div class="clients-section-label" style="margin-top:8px">Clients enregistrés</div>
-    <div id="client-list"></div>
+    <div id="client-list" style="display:flex;flex-direction:column;gap:10px"></div>
 
 </div>
 </div>
@@ -1245,7 +1245,7 @@ function renderHistory(c) {
     const items = hist.slice().reverse().map(e => `
         <div class="history-item">
             <div class="history-item-info">
-                <div class="history-item-date">${e.date.split('-').reverse().join('/')} · ${e.status === 'paid' ? '<span style="color:var(--accent)">Paye</span>' : '<span style="color:var(--accent2)">En attente</span>'}</div>
+                <div class="history-item-date">${e.date.split('-').reverse().join('/')} · ${e.status === 'paid' ? '<span style="color:var(--accent)">Payé</span>' : '<span style="color:var(--accent2)">En attente</span>'}</div>
                 <div class="history-item-detail">${e.desc}</div>
             </div>
             <div class="history-item-amount">${e.amount > 0 ? e.amount + ' €' : '-'}</div>
@@ -1263,10 +1263,40 @@ function setPaiement(id, status) {
     const clients = getClients();
     const idx = clients.findIndex(c => c.id === id);
     if (idx === -1) return;
+
+    const prev = clients[idx].paiement;
     clients[idx].paiement = status;
+
+    // Auto-add history entry when switching to paid
+    if (status === 'paid' && prev !== 'paid' && clients[idx].devis) {
+        if (!clients[idx].historique) clients[idx].historique = [];
+
+        // Check not already logged for this devis
+        const devisTotal = clients[idx].devis.total;
+        const today = new Date().toISOString().slice(0, 10);
+        const alreadyLogged = clients[idx].historique.some(e =>
+            e.amount === devisTotal && e.date === today
+        );
+
+        if (!alreadyLogged) {
+            const lignes = clients[idx].devis.lignes.map(l =>
+                l.qty + 'x ' + l.label.replace(' (int. + ext.)', '')
+            ).join(', ');
+
+            clients[idx].historique.push({
+                id: Date.now(),
+                date: today,
+                desc: lignes,
+                amount: devisTotal,
+                status: 'paid',
+                auto: true
+            });
+        }
+    }
+
     saveClients(clients);
     renderClients();
-    const labels = { paid: 'Paye ✓', pending: 'En attente', unpaid: 'Non paye' };
+    const labels = { paid: 'Payé ✓', pending: 'En attente', unpaid: 'Non payé' };
     showToast(labels[status] || status, status === 'paid' ? 'success' : '');
 }
 
@@ -1466,9 +1496,9 @@ function renderClients() {
                 </div>
                 ${devisHtml}
                 <div class="status-bar">
-                    <button class="status-btn ${c.paiement==='paid'?'active-paid':''}" onclick="setPaiement(${c.id},'paid')">✓ Paye</button>
+                    <button class="status-btn ${c.paiement==='paid'?'active-paid':''}" onclick="setPaiement(${c.id},'paid')">✓ Payé</button>
                     <button class="status-btn ${c.paiement==='pending'?'active-pending':''}" onclick="setPaiement(${c.id},'pending')">En attente</button>
-                    <button class="status-btn ${c.paiement==='unpaid'?'active-unpaid':''}" onclick="setPaiement(${c.id},'unpaid')">Non paye</button>
+                    <button class="status-btn ${c.paiement==='unpaid'?'active-unpaid':''}" onclick="setPaiement(${c.id},'unpaid')">Non payé</button>
                 </div>
                 <div class="notes-section">
                     <div class="notes-label">Notes chantier</div>
