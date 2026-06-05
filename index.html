@@ -368,6 +368,26 @@
         /* ADD CLIENT BTN */
         .add-client-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, rgba(26,159,212,0.2), rgba(26,159,212,0.1)); border: 1px solid rgba(26,159,212,0.4); border-radius: 12px; color: var(--accent); font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .add-client-btn:hover { background: linear-gradient(135deg, rgba(26,159,212,0.3), rgba(26,159,212,0.15)); }
+
+        /* NOUVEAU PASSAGE */
+        .passage-steps { display: flex; gap: 6px; padding: 0 20px 12px; }
+        .passage-step { flex: 1; height: 3px; border-radius: 2px; background: var(--surface2); transition: background 0.3s; }
+        .passage-step.active { background: var(--accent); }
+        .passage-step-content { display: none; padding: 0 20px 16px; flex-direction: column; gap: 12px; }
+        .passage-step-content.visible { display: flex; }
+        .passage-recap { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+        .passage-recap-row { display: flex; justify-content: space-between; font-size: 0.78rem; font-family: 'DM Mono', monospace; color: var(--muted); margin-bottom: 4px; }
+        .passage-recap-row:last-child { margin-bottom: 0; color: var(--accent); font-weight: 700; font-size: 0.9rem; padding-top: 6px; border-top: 1px solid var(--border); margin-top: 4px; }
+        .passage-recap-row .val { color: var(--text); }
+        .grattage-adjust { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .grattage-adjust:last-child { border-bottom: none; }
+        .grattage-adjust-label { font-size: 0.82rem; font-weight: 600; }
+        .grattage-adjust-sub { font-size: 0.68rem; font-family: 'DM Mono', monospace; color: var(--muted); margin-top: 2px; }
+        .passage-total { display: flex; justify-content: space-between; align-items: center; background: rgba(26,159,212,0.1); border: 1px solid rgba(26,159,212,0.3); border-radius: 10px; padding: 12px 16px; }
+        .passage-total-label { font-size: 0.78rem; font-family: 'DM Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+        .passage-total-amount { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+        .modal-nav { display: flex; gap: 8px; }
+        .btn-modal-back { padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
         @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .pop { animation: pop 0.18s ease-out; }
     </style>
@@ -834,6 +854,59 @@
     </div>
 </div>
 
+
+<!-- NOUVEAU PASSAGE MODAL -->
+<div class="modal-overlay" id="passage-modal">
+    <div class="modal" style="max-height:90vh;overflow-y:auto">
+        <div class="modal-header">
+            <div class="modal-title">Nouveau passage</div>
+            <button class="modal-close" onclick="closePassageModal()"><i class="fas fa-xmark"></i></button>
+        </div>
+        <div class="passage-steps">
+            <div class="passage-step active" id="pstep-0"></div>
+            <div class="passage-step" id="pstep-1"></div>
+            <div class="passage-step" id="pstep-2"></div>
+        </div>
+
+        <!-- STEP 1: Date -->
+        <div class="passage-step-content visible" id="pstep-content-0">
+            <div style="font-size:0.78rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:4px">RENDEZ-VOUS</div>
+            <div class="rdv-grid">
+                <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="p-date" type="date"></div>
+                <div class="form-group"><label class="form-label">Heure</label><input class="form-input" id="p-heure" type="time"></div>
+            </div>
+            <div class="passage-recap" id="p-devis-recap"></div>
+        </div>
+
+        <!-- STEP 2: Grattage -->
+        <div class="passage-step-content" id="pstep-content-1">
+            <div style="font-size:0.78rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:4px">AJUSTER LE GRATTAGE</div>
+            <div id="p-grattage-list"></div>
+        </div>
+
+        <!-- STEP 3: Recap -->
+        <div class="passage-step-content" id="pstep-content-2">
+            <div style="font-size:0.78rem;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:4px">RÉCAPITULATIF</div>
+            <div class="passage-recap" id="p-final-recap"></div>
+            <div class="passage-total">
+                <div class="passage-total-label">Total passage</div>
+                <div class="passage-total-amount" id="p-total">0 EUR</div>
+            </div>
+            <div class="ics-row" style="padding:0">
+                <div><div class="ics-label">Ajouter au calendrier iPhone</div><div class="ics-sub">Génère un fichier .ics</div></div>
+                <label class="toggle-wrap"><input type="checkbox" id="p-ics" checked><span class="toggle-slider"></span></label>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="modal-nav">
+                <button class="btn-modal-back" id="p-btn-back" onclick="passageStep(-1)" style="display:none"><i class="fas fa-arrow-left"></i></button>
+                <button class="btn-modal-save" id="p-btn-next" onclick="passageStep(1)">Suivant <i class="fas fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -882,27 +955,40 @@ function renderDashboard() {
 
     document.getElementById('dash-month-label').textContent = MONTHS_FR[dashMonth] + ' ' + dashYear;
 
-    // CA du mois - from historique entries
+    // CA du mois — historique payé OU client payé ce mois sans historique
     let ca = 0, chantiers = 0;
+    const countedIds = new Set();
+
     clients.forEach(c => {
+        let addedFromHistory = false;
         (c.historique || []).forEach(e => {
             if (e.date && e.date.startsWith(monthStr) && e.status === 'paid') {
                 ca += e.amount || 0;
                 chantiers++;
+                addedFromHistory = true;
             }
         });
+        // Fallback: client payé avec RDV ce mois et pas d'historique
+        if (!addedFromHistory && c.paiement === 'paid' && c.devis && c.rdv && c.rdv.date && c.rdv.date.startsWith(monthStr)) {
+            ca += c.devis.total || 0;
+            chantiers++;
+        }
     });
     document.getElementById('dash-ca').textContent = ca.toFixed(0);
+    document.getElementById('dash-ca-sub').textContent = 'EUR encaissés';
     document.getElementById('dash-chantiers').textContent = chantiers;
 
-    // En attente - clients with pending payment this month
-    let attente = 0;
+    // En attente — clients avec RDV ce mois ET statut pending
+    let attente = 0, nbAttente = 0;
     clients.forEach(c => {
         if (c.paiement === 'pending' && c.devis) {
+            // Compter tous les en attente (pas seulement ce mois)
             attente += c.devis.total || 0;
+            nbAttente++;
         }
     });
     document.getElementById('dash-attente').textContent = attente.toFixed(0);
+    document.getElementById('dash-attente-sub').textContent = nbAttente > 0 ? nbAttente + ' devis en attente' : 'EUR a encaisser';
     document.getElementById('dash-clients').textContent = clients.length;
 
     // Prochains RDV (upcoming)
@@ -949,8 +1035,8 @@ function renderDashboard() {
             const day = d.getDate();
             const month = MONTHS_SHORT[d.getMonth()];
             const amount = c.devis ? c.devis.total + ' EUR' : '-';
-            const statusColor = c.paiement === 'paid' ? 'var(--accent)' : c.paiement === 'unpaid' ? 'var(--danger)' : 'var(--accent2)';
-            const statusLabel = { paid: 'Paye', pending: 'En attente', unpaid: 'Non paye' }[c.paiement] || '';
+            const statusColor = c.paiement === 'paid' ? '#2ecc71' : c.paiement === 'unpaid' ? 'var(--danger)' : '#ffffff';
+            const statusLabel = { paid: '✓ Payé', pending: 'En attente', unpaid: 'Non payé' }[c.paiement] || '';
             return `<div class="rdv-item past">
                 <div class="rdv-date-block">
                     <div class="rdv-day">${day}</div>
@@ -958,7 +1044,7 @@ function renderDashboard() {
                 </div>
                 <div class="rdv-info">
                     <div class="rdv-name">${c.prenom} ${c.nom}</div>
-                    <div class="rdv-time" style="color:${statusColor}">${statusLabel}</div>
+                    <div class="rdv-time" style="color:${statusColor};font-weight:700">${statusLabel}</div>
                 </div>
                 <div class="rdv-amount">${amount}</div>
             </div>`;
@@ -972,7 +1058,8 @@ function switchPage(name) {
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.add('active');
-    if (name === 'clients') { loadDevisBadge(); renderClients(); }
+    if (name === 'clients') { loadDevisBadge(); renderClients();
+renderDashboard(); }
     if (name === 'dashboard') renderDashboard();
     window.scrollTo(0, 0);
 }
@@ -1200,7 +1287,8 @@ async function syncFromFirebase() {
         if (clients.length > 0) {
             clients.sort((a,b) => a.createdAt > b.createdAt ? 1 : -1);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
-            renderClients();
+            if (document.getElementById('page-clients').classList.contains('active')) renderClients();
+            if (document.getElementById('page-dashboard').classList.contains('active')) renderDashboard();
         }
     } catch(e) { console.warn('Sync error', e); }
 }
@@ -1465,19 +1553,15 @@ function setPaiement(id, status) {
     // Auto-add history entry when switching to paid
     if (status === 'paid' && prev !== 'paid' && clients[idx].devis) {
         if (!clients[idx].historique) clients[idx].historique = [];
-
-        // Check not already logged for this devis
         const devisTotal = clients[idx].devis.total;
         const today = new Date().toISOString().slice(0, 10);
         const alreadyLogged = clients[idx].historique.some(e =>
-            e.amount === devisTotal && e.date === today
+            e.amount === devisTotal && e.date === today && e.auto
         );
-
         if (!alreadyLogged) {
             const lignes = clients[idx].devis.lignes.map(l =>
                 l.qty + 'x ' + l.label.replace(' (int. + ext.)', '')
             ).join(', ');
-
             clients[idx].historique.push({
                 id: Date.now(),
                 date: today,
@@ -1487,6 +1571,15 @@ function setPaiement(id, status) {
                 auto: true
             });
         }
+    }
+
+    // Auto-remove history entry when switching away from paid
+    if (status !== 'paid' && prev === 'paid' && clients[idx].historique) {
+        const today = new Date().toISOString().slice(0, 10);
+        const devisTotal = clients[idx].devis ? clients[idx].devis.total : null;
+        clients[idx].historique = clients[idx].historique.filter(e =>
+            !(e.auto && e.date === today && e.amount === devisTotal)
+        );
     }
 
     saveClients(clients);
@@ -1507,6 +1600,200 @@ function saveNotes(id) {
 }
 
 
+
+// -- NOUVEAU PASSAGE --------------------------------------
+let passageClientId = null;
+let passageCurrentStep = 0;
+let passageGrattageData = {}; // { typeId: qty }
+
+function openPassageModal(clientId) {
+    passageClientId = clientId;
+    passageCurrentStep = 0;
+    passageGrattageData = {};
+
+    const client = getClients().find(c => c.id === clientId);
+    if (!client) return;
+
+    // Pre-fill date with today + default time
+    const now = new Date();
+    document.getElementById('p-date').value = now.toISOString().slice(0,10);
+    document.getElementById('p-heure').value = client.rdv ? client.rdv.heure : '09:00';
+    document.getElementById('p-ics').checked = true;
+
+    // Show devis recap in step 1
+    const recap = document.getElementById('p-devis-recap');
+    if (client.devis) {
+        const lines = client.devis.lignes.map(l =>
+            `<div class="passage-recap-row"><span>${l.qty}x ${l.label.replace(' (int. + ext.)','')}</span><span class="val">${l.sub.toFixed(0)} EUR</span></div>`
+        ).join('');
+        recap.innerHTML = lines + `<div class="passage-recap-row"><span>Total habituel</span><span>${client.devis.total} EUR</span></div>`;
+    } else {
+        recap.innerHTML = '<div style="font-size:0.75rem;font-family:DM Mono,monospace;color:var(--muted);font-style:italic">Aucun devis enregistre</div>';
+    }
+
+    // Build grattage adjusters for step 2
+    const grattageList = document.getElementById('p-grattage-list');
+    if (client.devis && client.devis.lignes.length > 0) {
+        grattageList.innerHTML = client.devis.lignes.map(l => {
+            const id = l.label.replace(/[^a-z]/gi,'').toLowerCase().slice(0,8);
+            passageGrattageData[id] = l.gratte || 0;
+            return `<div class="grattage-adjust">
+                <div>
+                    <div class="grattage-adjust-label">${l.label.replace(' (int. + ext.)','')}</div>
+                    <div class="grattage-adjust-sub">${l.qty} unité(s) · habituel: ${l.gratte || 0} grattage(s)</div>
+                </div>
+                <div class="stepper" style="flex-shrink:0">
+                    <button onclick="adjustGratte('${id}',-1,${l.qty})">-</button>
+                    <input type="number" id="pg-${id}" value="${l.gratte||0}" min="0" max="${l.qty}" style="width:32px;height:32px;background:none;border:none;border-left:1px solid var(--border);border-right:1px solid var(--border);color:var(--text);text-align:center;font-family:DM Mono,monospace;outline:none" oninput="updateGratte('${id}',${l.qty})">
+                    <button onclick="adjustGratte('${id}',1,${l.qty})">+</button>
+                </div>
+            </div>`;
+        }).join('');
+    } else {
+        grattageList.innerHTML = '<div style="font-size:0.75rem;font-family:DM Mono,monospace;color:var(--muted);font-style:italic">Aucun devis a ajuster</div>';
+    }
+
+    goToPassageStep(0);
+    document.getElementById('passage-modal').classList.add('open');
+}
+
+function closePassageModal() {
+    document.getElementById('passage-modal').classList.remove('open');
+    passageClientId = null;
+}
+
+function adjustGratte(id, delta, max) {
+    const el = document.getElementById('pg-' + id);
+    const val = parseInt(el.value) || 0;
+    el.value = Math.min(max, Math.max(0, val + delta));
+    passageGrattageData[id] = parseInt(el.value);
+    updatePassageTotal();
+}
+
+function updateGratte(id, max) {
+    const el = document.getElementById('pg-' + id);
+    el.value = Math.min(max, Math.max(0, parseInt(el.value) || 0));
+    passageGrattageData[id] = parseInt(el.value);
+    updatePassageTotal();
+}
+
+function updatePassageTotal() {
+    const client = getClients().find(c => c.id === passageClientId);
+    if (!client || !client.devis) return;
+    let total = 0;
+    client.devis.lignes.forEach(l => {
+        const id = l.label.replace(/[^a-z]/gi,'').toLowerCase().slice(0,8);
+        const gratte = passageGrattageData[id] || 0;
+        total += l.qty * l.pu + gratte * 2;
+    });
+    // Apply remise if recurrent
+    if (client.devis.remise > 0) {
+        total = Math.floor(total * 0.9 / 5) * 5;
+    }
+    document.getElementById('p-total').textContent = total + ' EUR';
+    return total;
+}
+
+function buildFinalRecap() {
+    const client = getClients().find(c => c.id === passageClientId);
+    if (!client || !client.devis) return 0;
+    let total = 0;
+    let html = '';
+    client.devis.lignes.forEach(l => {
+        const id = l.label.replace(/[^a-z]/gi,'').toLowerCase().slice(0,8);
+        const gratte = passageGrattageData[id] || 0;
+        const sub = l.qty * l.pu + gratte * 2;
+        total += sub;
+        const gratteTxt = gratte > 0 ? ` + ${gratte} grattage(s)` : '';
+        html += `<div class="passage-recap-row"><span>${l.qty}x ${l.label.replace(' (int. + ext.)/','')}${gratteTxt}</span><span class="val">${sub.toFixed(0)} EUR</span></div>`;
+    });
+    if (client.devis.remise > 0) {
+        const remise = total - Math.floor(total * 0.9 / 5) * 5;
+        html += `<div class="passage-recap-row"><span>Remise recurrent</span><span class="val">-${remise} EUR</span></div>`;
+        total = Math.floor(total * 0.9 / 5) * 5;
+    }
+    document.getElementById('p-final-recap').innerHTML = html;
+    document.getElementById('p-total').textContent = total + ' EUR';
+    return total;
+}
+
+function goToPassageStep(step) {
+    passageCurrentStep = step;
+    // Update indicators
+    for (let i = 0; i < 3; i++) {
+        document.getElementById('pstep-' + i).classList.toggle('active', i <= step);
+        const content = document.getElementById('pstep-content-' + i);
+        content.classList.toggle('visible', i === step);
+    }
+    // Buttons
+    document.getElementById('p-btn-back').style.display = step > 0 ? 'block' : 'none';
+    const nextBtn = document.getElementById('p-btn-next');
+    if (step === 2) {
+        nextBtn.innerHTML = '<i class="fas fa-check"></i> Confirmer';
+    } else {
+        nextBtn.innerHTML = 'Suivant <i class="fas fa-arrow-right"></i>';
+    }
+    if (step === 2) buildFinalRecap();
+}
+
+function passageStep(dir) {
+    if (dir === 1 && passageCurrentStep === 2) {
+        confirmPassage(); return;
+    }
+    if (dir === 1 && passageCurrentStep === 0) {
+        if (!document.getElementById('p-date').value) {
+            showToast('Choisissez une date', 'error'); return;
+        }
+    }
+    goToPassageStep(passageCurrentStep + dir);
+}
+
+function confirmPassage() {
+    const client = getClients().find(c => c.id === passageClientId);
+    if (!client) return;
+
+    const date = document.getElementById('p-date').value;
+    const heure = document.getElementById('p-heure').value;
+    const useIcs = document.getElementById('p-ics').checked;
+
+    // Build new devis for this passage
+    const newLignes = (client.devis ? client.devis.lignes : []).map(l => {
+        const id = l.label.replace(/[^a-z]/gi,'').toLowerCase().slice(0,8);
+        const gratte = passageGrattageData[id] || 0;
+        return { ...l, gratte, sub: l.qty * l.pu + gratte * 2 };
+    });
+    let newTotal = newLignes.reduce((s, l) => s + l.sub, 0);
+    let remise = 0;
+    if (client.devis && client.devis.remise > 0) {
+        const avant = newTotal;
+        newTotal = Math.floor(newTotal * 0.9 / 5) * 5;
+        remise = avant - newTotal;
+    }
+
+    const clients = getClients();
+    const idx = clients.findIndex(c => c.id === passageClientId);
+
+    // Update RDV
+    clients[idx].rdv = { date, heure };
+    // Update devis for this passage
+    clients[idx].devis = { ...clients[idx].devis, lignes: newLignes, total: newTotal, remise };
+    clients[idx].paiement = 'pending';
+
+    // Add to history
+    if (!clients[idx].historique) clients[idx].historique = [];
+    const desc = newLignes.map(l => l.qty + 'x ' + l.label.replace(' (int. + ext.)','') + (l.gratte > 0 ? ' (' + l.gratte + ' grattage)' : '')).join(', ');
+    clients[idx].historique.push({
+        id: Date.now(), date, desc, amount: newTotal, status: 'pending', auto: false
+    });
+
+    saveClients(clients);
+    if (useIcs) downloadICS(clients[idx]);
+    closePassageModal();
+    renderClients();
+    renderDashboard();
+    showToast('Passage enregistre', 'success');
+}
+
 // -- NEW CLIENT MODAL -------------------------------------
 function openNewClientModal() {
     loadDevisBadge();
@@ -1515,6 +1802,7 @@ function openNewClientModal() {
 function closeNewClientModal() {
     document.getElementById('new-client-modal').classList.remove('open');
 }
+
 
 
 // -- NEW CLIENT MODAL -------------------------------------
@@ -1727,11 +2015,12 @@ function renderClients() {
                     </div>
                     <div class="history-list">${renderHistory(c)}</div>
                 </div>
-                <div class="client-actions" style="flex-wrap:wrap">
-                    <button class="btn-sm btn-ics" onclick="openEditModal(${c.id})"><i class="fas fa-pen"></i> Modifier</button>
-                    <button class="btn-sm btn-ics" onclick="shareDevisSMS(${c.id})"><i class="fas fa-file-pdf"></i> Devis</button>
-                    <button class="btn-sm btn-ics" onclick="inviteClientRDV(${c.id})"><i class="fas fa-calendar-plus"></i> Inviter</button>
-                    <button class="btn-sm btn-delete" onclick="deleteClient(${c.id})"><i class="fas fa-trash"></i></button>
+                <div class="client-actions" style="flex-wrap:wrap;gap:6px">
+                    <button class="btn-sm btn-ics" style="flex:1 1 45%" onclick="openPassageModal(${c.id})"><i class="fas fa-rotate"></i> Passage</button>
+                    <button class="btn-sm btn-ics" style="flex:1 1 45%" onclick="openEditModal(${c.id})"><i class="fas fa-pen"></i> Modifier</button>
+                    <button class="btn-sm btn-ics" style="flex:1 1 45%" onclick="shareDevisSMS(${c.id})"><i class="fas fa-file-pdf"></i> Devis</button>
+                    <button class="btn-sm btn-ics" style="flex:1 1 45%" onclick="inviteClientRDV(${c.id})"><i class="fas fa-calendar-plus"></i> Inviter</button>
+                    <button class="btn-sm btn-delete" style="width:100%;flex:1 1 100%" onclick="deleteClient(${c.id})"><i class="fas fa-trash"></i> Supprimer</button>
                 </div>
             </div>
         </div>`;
@@ -1748,12 +2037,22 @@ function showToast(msg,type='') {
 
 renderClients();
 
-// Sync from Firebase when ready
+// Sync from Firebase when ready then refresh dashboard
 document.addEventListener('fb-ready', () => {
-    syncFromFirebase();
+    syncFromFirebase().then(() => {
+        if (document.getElementById('page-dashboard').classList.contains('active')) {
+            renderDashboard();
+        }
+    });
 });
 // Also try immediately if already ready
-if (window._fbAvailable) syncFromFirebase();
+if (window._fbAvailable) {
+    syncFromFirebase().then(() => {
+        if (document.getElementById('page-dashboard').classList.contains('active')) {
+            renderDashboard();
+        }
+    });
+}
 
 // -- PWA SERVICE WORKER -----------------------------------
 if ('serviceWorker' in navigator) {
