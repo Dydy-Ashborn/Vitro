@@ -356,6 +356,7 @@
 <div class="card">
 
     <div class="section-label">Fenêtres &amp; Vitrages</div>
+    <div style="padding: 4px 24px 8px; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted);">Encadrements inclus dans toutes les prestations</div>
         <div class="row">
             <div class="row-top">
                 <div class="label-group">
@@ -1403,10 +1404,12 @@ function genClientPDFBlob(client) {
     doc.setTextColor(74,240,196); doc.setFont('helvetica','bold'); doc.setFontSize(14);
     doc.text(client.devis.total.toFixed(2)+' e', W-marginX-6, y+9.5, {align:'right'}); y += 22;
 
-    doc.setFillColor(245,247,250); doc.roundedRect(marginX,y,W-marginX*2,18,3,3,'F');
+    doc.setFillColor(245,247,250); doc.roundedRect(marginX,y,W-marginX*2,24,3,3,'F');
     doc.setTextColor(107,117,148); doc.setFont('helvetica','normal'); doc.setFontSize(8);
-    doc.text("Ce devis est fourni a titre indicatif. Le tarif final peut varier selon les conditions d'acces", marginX+5, y+6);
-    doc.text("et l'etat des vitres constate sur place. Devis valable 30 jours.", marginX+5, y+12);
+    doc.text("Toutes les prestations incluent le nettoyage des encadrements.", marginX+5, y+6);
+    doc.setFontSize(7.5);
+    doc.text("Ce devis est fourni a titre indicatif. Le tarif final peut varier selon les conditions d'acces", marginX+5, y+13);
+    doc.text("et l'etat des vitres constate sur place. Devis valable 30 jours.", marginX+5, y+19);
 
     doc.setFillColor(22,25,35); doc.rect(0,282,W,15,'F');
     doc.setTextColor(74,240,196); doc.setFont('helvetica','bold'); doc.setFontSize(7);
