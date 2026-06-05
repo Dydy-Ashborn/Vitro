@@ -1383,9 +1383,9 @@ function genClientPDFBlob(client) {
         doc.setTextColor(40,40,60); doc.setFont('helvetica','normal'); doc.setFontSize(9);
         doc.text(l.label, marginX+4, y+1.5);
         doc.text(String(l.qty), 112, y+1.5, {align:'center'});
-        doc.text(l.gratte>0 ? String(l.gratte)+' (+'+(l.gratte*2)+'e)' : '-', 140, y+1.5, {align:'center'});
+        doc.text(l.gratte>0 ? String(l.gratte)+' (+'+(l.gratte*2)+'EUR)' : '-', 140, y+1.5, {align:'center'});
         doc.setFont('helvetica','bold');
-        doc.text(l.sub.toFixed(2)+' e', W-marginX-4, y+1.5, {align:'right'});
+        doc.text(l.sub.toFixed(2)+' EUR', W-marginX-4, y+1.5, {align:'right'});
         y += 9;
     });
 
@@ -1395,14 +1395,14 @@ function genClientPDFBlob(client) {
         doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(74,240,196);
         doc.text('Remise chantier recurrent -10% (arrondi 5e)', marginX+4, y);
         doc.setFont('helvetica','bold');
-        doc.text('-'+client.devis.remise.toFixed(2)+' e', W-marginX-4, y, {align:'right'}); y += 8;
+        doc.text('-'+client.devis.remise.toFixed(2)+' EUR', W-marginX-4, y, {align:'right'}); y += 8;
     }
 
     y += 2; doc.setFillColor(13,15,20); doc.roundedRect(marginX,y,W-marginX*2,14,3,3,'F');
     doc.setTextColor(107,117,148); doc.setFont('helvetica','normal'); doc.setFontSize(9);
     doc.text('TOTAL ESTIME TTC', marginX+6, y+9);
     doc.setTextColor(74,240,196); doc.setFont('helvetica','bold'); doc.setFontSize(14);
-    doc.text(client.devis.total.toFixed(2)+' e', W-marginX-6, y+9.5, {align:'right'}); y += 22;
+    doc.text(client.devis.total.toFixed(2)+' EUR', W-marginX-6, y+9.5, {align:'right'}); y += 22;
 
     doc.setFillColor(245,247,250); doc.roundedRect(marginX,y,W-marginX*2,24,3,3,'F');
     doc.setTextColor(107,117,148); doc.setFont('helvetica','normal'); doc.setFontSize(8);
