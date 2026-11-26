@@ -1,4 +1,4 @@
-const CACHE = 'vitro-v2';
+const CACHE = 'vitro-v3';
 
 self.addEventListener('install', e => {
     e.waitUntil(

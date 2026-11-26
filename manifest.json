@@ -1,7 +1,7 @@
 {
-  "name": "Vitro - Nettoyage de Vitres",
+  "name": "Vitro - Nettoyage de vitrines",
   "short_name": "Vitro",
-  "description": "Calculateur de devis et gestion clients",
+  "description": "Devis vitrines et suivi des boutiques",
   "start_url": "/Vitro/",
   "scope": "/Vitro/",
   "display": "standalone",
