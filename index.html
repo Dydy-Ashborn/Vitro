@@ -913,8 +913,8 @@ const LOGO_PDF = 'iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAACZlElEQVR42sW9d7
 
 // -- CONFIG ------------------------------------------------
 // -- GRILLE TARIFAIRE BOUTIQUES ------------------------------
-const TARIF_DEFAUT = { petit: 6, moyen: 9, grand: 13, minimum: 20, majInt: 50, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 1.80, conso: 7, margeRoute: 50, kmGratuit: 0 };
-const TARIF_KEY = 'vitro_tarif_boutique';
+const TARIF_DEFAUT = { petit: 5, moyen: 8, grand: 11, minimum: 20, majInt: 40, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 1.80, conso: 7, margeRoute: 50, kmGratuit: 0 };
+const TARIF_KEY = 'vitro_tarif_boutique_v2';
 let TARIF = (() => {
     try { return { ...TARIF_DEFAUT, ...(JSON.parse(localStorage.getItem(TARIF_KEY)) || {}) }; }
     catch { return { ...TARIF_DEFAUT }; }
