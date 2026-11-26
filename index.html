@@ -913,7 +913,7 @@ const LOGO_PDF = 'iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAACZlElEQVR42sW9d7
 
 // -- CONFIG ------------------------------------------------
 // -- GRILLE TARIFAIRE BOUTIQUES ------------------------------
-const TARIF_DEFAUT = { petit: 6, moyen: 9, grand: 13, minimum: 20, majInt: 50, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 1.80, conso: 7, margeRoute: 50, kmGratuit: 5 };
+const TARIF_DEFAUT = { petit: 6, moyen: 9, grand: 13, minimum: 20, majInt: 50, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 1.80, conso: 7, margeRoute: 50, kmGratuit: 0 };
 const TARIF_KEY = 'vitro_tarif_boutique';
 let TARIF = (() => {
     try { return { ...TARIF_DEFAUT, ...(JSON.parse(localStorage.getItem(TARIF_KEY)) || {}) }; }
@@ -1086,7 +1086,7 @@ function fmt(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
 // Frais de déplacement : essence aller-retour + petit billet, arrondi à l'euro supérieur
 function fraisRoute(km) {
     const T = TARIF;
-    if (!km || km <= T.kmGratuit) return { frais: 0, essence: 0 };
+    if (!km || km <= (T.kmGratuit || 0)) return { frais: 0, essence: 0 };
     const essence = km * 2 * T.conso / 100 * T.prixLitre;
     return { frais: Math.ceil(essence * (1 + T.margeRoute / 100) - 1e-9), essence };
 }
@@ -1138,20 +1138,20 @@ function computeDevis() {
         hautSup += n * T[id] * fp * T.majHaut / 100;
         temps += n * PANNEAUX[id].temps * ft * 0.5;
     });
-    if (hautSup > 0) lignes.push({ label: 'Hauteur, ' + haut + ' face' + (haut > 1 ? 's' : '') + ' (+' + T.majHaut + ' %)', qty: null, sub: hautSup });
+    if (hautSup > 0) lignes.push({ label: 'Hauteur, ' + haut + ' face' + (haut > 1 ? 's' : '') + ' (+' + T.majHaut + ' %)', qty: null, sub: hautSup, desc: 'Travail en hauteur (échelle), ' + haut + ' face' + (haut > 1 ? 's' : '') });
 
     const brut = base + hautSup;
     const saleSup = sale ? brut * T.majSale / 100 : 0;
-    if (saleSup > 0) { lignes.push({ label: 'Très sale, ce passage (+' + T.majSale + ' %)', qty: null, sub: saleSup }); temps *= 1 + T.majSale / 100; }
+    if (saleSup > 0) { lignes.push({ label: 'Très sale, ce passage (+' + T.majSale + ' %)', qty: null, sub: saleSup, desc: 'Nettoyage renforcé (premier passage)' }); temps *= 1 + T.majSale / 100; }
 
     const fRec = rec ? 1 - T.remiseRec / 100 : 1;
     const remise = rec ? -(brut + saleSup) * T.remiseRec / 100 : 0;
     if (remise) lignes.push({ label: 'Remise passage régulier (−' + T.remiseRec + ' %)', qty: null, sub: remise, discount: true });
-    if (route > 0) lignes.push({ label: 'Déplacement (' + (km * 2) + ' km A/R)', qty: null, sub: route });
+    if (route > 0) lignes.push({ label: 'Déplacement (' + (km * 2) + ' km A/R)', qty: null, sub: route, desc: 'Déplacement inclus' });
 
     const calcTotal = (montant) => {
         if (nb === 0) return 0;
-        return ceilTo(Math.max(montant, T.minimum), T.arrondi || 1);
+        return ceilTo(Math.max(montant, T.minimum), Math.max(1, Math.round(T.arrondi || 5)));
     };
     const avantArrondi = (brut + saleSup) * fRec + route;
     const total = calcTotal(avantArrondi);
@@ -1159,7 +1159,7 @@ function computeDevis() {
     const minApplique = nb > 0 && avantArrondi < T.minimum;
     const arrondi = total - Math.max(avantArrondi, minApplique ? T.minimum : 0);
     if (minApplique) lignes.push({ label: 'Minimum par passage', qty: null, sub: T.minimum - avantArrondi, minimum: true });
-    if (nb > 0 && arrondi > 0.004) lignes.push({ label: 'Arrondi', qty: null, sub: arrondi });
+    if (nb > 0 && arrondi > 0.004) lignes.push({ label: 'Arrondi au ' + (T.arrondi || 5) + ' €', qty: null, sub: arrondi, arrondi: true });
 
     if (nb > 0) temps += 5; // installation / rangement
     temps = Math.round(temps);
@@ -1233,7 +1233,7 @@ function calc() {
 // -- FRAIS DE ROUTE ZONES --------------------------------
 const ZONES_VILLE = {
     // Distance route aller depuis Sallanches (approximative, modifiable dans le calculateur)
-    'sallanches': { km: 0, label: 'Sallanches' },
+    'sallanches': { km: 3, label: 'Sallanches' },
     'cordon': { km: 5, label: 'Cordon' },
     'domancy': { km: 3, label: 'Domancy' },
     'passy': { km: 5, label: 'Passy' },
@@ -1386,7 +1386,7 @@ function saveTarif() {
         const v = parseFloat(document.getElementById('t-' + k).value);
         t[k] = isNaN(v) || v < 0 ? TARIF_DEFAUT[k] : v;
     });
-    if (t.arrondi < 1) t.arrondi = 1;
+    t.arrondi = Math.max(1, Math.round(t.arrondi));
     if (t.remiseRec > 90) t.remiseRec = 90;
     TARIF = t;
     localStorage.setItem(TARIF_KEY, JSON.stringify(t));
@@ -1448,29 +1448,24 @@ function buildPDF({ titre, client, lignes, total, totalRecurrent, freq, isInvoic
     }
 
     doc.setTextColor(13,15,20); doc.setFont('helvetica','bold'); doc.setFontSize(11);
-    doc.text(titre.toUpperCase(), marginX, y); y += 7;
+    doc.text(titre.toUpperCase() + ' — PRESTATION', marginX, y); y += 7;
     doc.setDrawColor(220,225,232); doc.line(marginX, y, W-marginX, y); y += 6;
     doc.setFontSize(9);
-    (lignes || []).forEach(l => {
-        doc.setFont('helvetica','normal'); doc.setTextColor(60,70,90);
-        doc.text(doc.splitTextToSize(ligneTxt(l).replace(/−/g, '-'), 130)[0], marginX+2, y);
-        const v = l.sub < 0 ? '-' + (-l.sub).toFixed(2) : l.sub.toFixed(2);
-        doc.setFont('helvetica','bold');
-        doc.text(v + ' EUR', W-marginX-2, y, {align:'right'});
-        y += 7;
-    });
+    const items = (lignes || []).filter(l => l.qty || l.desc).map(l => l.qty ? ligneTxt(l) : l.desc);
+    doc.setFont('helvetica','normal'); doc.setTextColor(60,70,90);
+    items.forEach(txt => { doc.text('•  ' + txt, marginX+2, y); y += 7; });
     y += 2; doc.line(marginX, y, W-marginX, y); y += 6;
 
     doc.setFillColor(13,15,20); doc.roundedRect(marginX,y,W-marginX*2,22,3,3,'F');
     doc.setTextColor(107,117,148); doc.setFont('helvetica','normal'); doc.setFontSize(9);
     doc.text(isInvoice ? 'MONTANT TTC' : (totalRecurrent && totalRecurrent !== total ? 'PREMIER PASSAGE' : 'PRIX DU PASSAGE'), marginX+8, y+14);
     doc.setTextColor(26,159,212); doc.setFont('helvetica','bold'); doc.setFontSize(18);
-    doc.text(total.toFixed(2)+' EUR', W-marginX-8, y+15, {align:'right'}); y += 28;
+    doc.text(Math.round(total)+' €', W-marginX-8, y+15, {align:'right'}); y += 28;
 
     if (!isInvoice && totalRecurrent) {
         doc.setFillColor(232,246,252); doc.roundedRect(marginX,y,W-marginX*2,14,3,3,'F');
         doc.setTextColor(13,32,64); doc.setFont('helvetica','bold'); doc.setFontSize(10);
-        doc.text('Passages suivants (' + (FREQ_LABELS[freq] || '').toLowerCase() + ') : ' + totalRecurrent.toFixed(2) + ' EUR', marginX+6, y+9);
+        doc.text('Passages suivants (' + (FREQ_LABELS[freq] || '').toLowerCase() + ') : ' + Math.round(totalRecurrent) + ' €', marginX+6, y+9);
         y += 20;
     }
 
