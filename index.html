@@ -913,11 +913,16 @@ const LOGO_PDF = 'iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAACZlElEQVR42sW9d7
 
 // -- CONFIG ------------------------------------------------
 // -- GRILLE TARIFAIRE BOUTIQUES ------------------------------
-const TARIF_DEFAUT = { petit: 5, moyen: 8, grand: 11, minimum: 20, majInt: 40, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 1.80, conso: 7, margeRoute: 50, kmGratuit: 0 };
+const TARIF_DEFAUT = { petit: 5, moyen: 8, grand: 11, minimum: 20, majInt: 40, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 2.05, conso: 8, margeRoute: 50, kmGratuit: 0 };
 const TARIF_KEY = 'vitro_tarif_boutique_v2';
 let TARIF = (() => {
-    try { return { ...TARIF_DEFAUT, ...(JSON.parse(localStorage.getItem(TARIF_KEY)) || {}) }; }
-    catch { return { ...TARIF_DEFAUT }; }
+    try {
+        const t = { ...TARIF_DEFAUT, ...(JSON.parse(localStorage.getItem(TARIF_KEY)) || {}) };
+        // Anciennes valeurs par défaut (1,80 €/L, 7 L/100) → mises à jour
+        if (t.prixLitre === 1.8) t.prixLitre = TARIF_DEFAUT.prixLitre;
+        if (t.conso === 7) t.conso = TARIF_DEFAUT.conso;
+        return t;
+    } catch { return { ...TARIF_DEFAUT }; }
 })();
 // Temps estimé (minutes) par panneau, extérieur seul
 const PANNEAUX = {
