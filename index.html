@@ -173,6 +173,9 @@
         .next-price { margin-top: 6px; font-size: 0.78rem; font-family: 'DM Mono', monospace; color: var(--accent2); }
         .next-price b { color: var(--text); }
         .rate-check { font-size: 0.68rem; font-family: 'DM Mono', monospace; margin-top: 2px; }
+        .face-row { display: flex; gap: 10px; margin-top: 8px; }
+        .face { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 6px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 4px 4px 4px 10px; }
+        .face-lbl { font-size: 0.68rem; font-family: 'DM Mono', monospace; color: var(--muted); }
         .freq-badge { font-size: 0.6rem; font-family: 'DM Mono', monospace; color: var(--accent); margin-left: 6px; }
 
         /* GRATTAGE */
@@ -450,18 +453,21 @@
 <div class="card">
 
     <div class="section-label">Vitrine — compte les panneaux</div>
-    <div style="padding: 4px 24px 8px; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted);">Prix extérieur par panneau · classe-les à l'œil</div>
+    <div style="padding: 4px 24px 8px; font-size: 0.65rem; font-family: 'DM Mono', monospace; color: var(--muted);">Extérieur et intérieur à part · classe-les à l'œil</div>
 
     <div class="row">
         <div class="row-top">
             <div class="label-group">
                 <div class="label-title">Petit panneau <span style="font-size:0.68rem;color:var(--muted);font-weight:400">(porte, &lt; 2 m²)</span></div>
-                <div class="label-price" id="lp-petit">6 € / panneau</div>
+                <div class="label-price" id="lp-petit"></div>
             </div>
-            <div class="stepper">
-                <button onclick="step('petit',-1)">−</button>
-                <input type="number" id="qty-petit" value="0" min="0" oninput="calc()">
-                <button onclick="step('petit',1)">+</button>
+        </div>
+        <div class="face-row">
+            <div class="face"><span class="face-lbl">Ext.</span>
+                <div class="stepper"><button onclick="step('petit',-1)">−</button><input type="number" id="qty-petit" value="0" min="0" oninput="calc()"><button onclick="step('petit',1)">+</button></div>
+            </div>
+            <div class="face"><span class="face-lbl">Int.</span>
+                <div class="stepper"><button onclick="step('int-petit',-1)">−</button><input type="number" id="qty-int-petit" value="0" min="0" oninput="calc()"><button onclick="step('int-petit',1)">+</button></div>
             </div>
         </div>
     </div>
@@ -469,12 +475,15 @@
         <div class="row-top">
             <div class="label-group">
                 <div class="label-title">Panneau moyen <span style="font-size:0.68rem;color:var(--muted);font-weight:400">(2 à 4 m²)</span></div>
-                <div class="label-price" id="lp-moyen">9 € / panneau</div>
+                <div class="label-price" id="lp-moyen"></div>
             </div>
-            <div class="stepper">
-                <button onclick="step('moyen',-1)">−</button>
-                <input type="number" id="qty-moyen" value="0" min="0" oninput="calc()">
-                <button onclick="step('moyen',1)">+</button>
+        </div>
+        <div class="face-row">
+            <div class="face"><span class="face-lbl">Ext.</span>
+                <div class="stepper"><button onclick="step('moyen',-1)">−</button><input type="number" id="qty-moyen" value="0" min="0" oninput="calc()"><button onclick="step('moyen',1)">+</button></div>
+            </div>
+            <div class="face"><span class="face-lbl">Int.</span>
+                <div class="stepper"><button onclick="step('int-moyen',-1)">−</button><input type="number" id="qty-int-moyen" value="0" min="0" oninput="calc()"><button onclick="step('int-moyen',1)">+</button></div>
             </div>
         </div>
     </div>
@@ -482,12 +491,15 @@
         <div class="row-top">
             <div class="label-group">
                 <div class="label-title">Grande vitrine <span style="font-size:0.68rem;color:var(--muted);font-weight:400">(&gt; 4 m²)</span></div>
-                <div class="label-price" id="lp-grand">13 € / panneau</div>
+                <div class="label-price" id="lp-grand"></div>
             </div>
-            <div class="stepper">
-                <button onclick="step('grand',-1)">−</button>
-                <input type="number" id="qty-grand" value="0" min="0" oninput="calc()">
-                <button onclick="step('grand',1)">+</button>
+        </div>
+        <div class="face-row">
+            <div class="face"><span class="face-lbl">Ext.</span>
+                <div class="stepper"><button onclick="step('grand',-1)">−</button><input type="number" id="qty-grand" value="0" min="0" oninput="calc()"><button onclick="step('grand',1)">+</button></div>
+            </div>
+            <div class="face"><span class="face-lbl">Int.</span>
+                <div class="stepper"><button onclick="step('int-grand',-1)">−</button><input type="number" id="qty-int-grand" value="0" min="0" oninput="calc()"><button onclick="step('int-grand',1)">+</button></div>
             </div>
         </div>
     </div>
@@ -496,16 +508,7 @@
     <div class="row">
         <div class="row-top">
             <div class="label-group">
-                <div class="label-title">Intérieur aussi</div>
-                <div class="label-price" id="lp-int">+50 % sur les panneaux</div>
-            </div>
-            <label class="toggle-wrap"><input type="checkbox" id="opt-int" onchange="calc()"><span class="toggle-slider"></span></label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="row-top">
-            <div class="label-group">
-                <div class="label-title">Dont en hauteur <span style="font-size:0.68rem;color:var(--muted);font-weight:400">(échelle)</span></div>
+                <div class="label-title">Faces en hauteur <span style="font-size:0.68rem;color:var(--muted);font-weight:400">(échelle)</span></div>
                 <div class="label-price" id="lp-haut">+50 % sur ces panneaux</div>
             </div>
             <div class="stepper">
@@ -540,18 +543,25 @@
     <div class="recurrent-row" style="flex-direction:column;align-items:stretch;gap:10px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
             <div class="label-group">
-                <div class="label-title" style="font-size:0.88rem;font-weight:600">Frais de route</div>
-                <div class="recurrent-sub" id="route-zone-label">Sallanches — gratuit</div>
+                <div class="label-title" style="font-size:0.88rem;font-weight:600">Déplacement</div>
+                <div class="recurrent-sub" id="route-zone-label">Sur place — gratuit</div>
             </div>
             <div style="font-size:1rem;font-weight:800;color:var(--accent);font-family:'DM Mono',monospace;flex-shrink:0" id="route-amount-display">0 €</div>
         </div>
-        <div style="position:relative">
-            <input type="text" id="ville-input" placeholder="Entrez une ville..." autocomplete="off"
-                style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.15s"
-                oninput="villeAutocomplete(this.value)" onfocus="showVilleSuggestions()">
-            <div id="ville-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid rgba(26,159,212,0.3);border-radius:8px;margin-top:4px;overflow:hidden;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5)"></div>
+        <div style="display:flex;gap:8px">
+            <div style="position:relative;flex:1">
+                <input type="text" id="ville-input" placeholder="Ville du client..." autocomplete="off"
+                    style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Syne',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.15s"
+                    oninput="villeAutocomplete(this.value)" onfocus="showVilleSuggestions()">
+                <div id="ville-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid rgba(26,159,212,0.3);border-radius:8px;margin-top:4px;overflow:hidden;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5)"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0 8px">
+                <input type="number" id="km-input" value="0" min="0" inputmode="decimal" oninput="calc()" style="width:44px;background:none;border:none;color:var(--text);text-align:right;font-family:'DM Mono',monospace;outline:none">
+                <span style="font-size:0.72rem;font-family:'DM Mono',monospace;color:var(--muted)">km</span>
+            </div>
         </div>
-        <input type="hidden" id="route" value="0">
+        <div style="font-size:0.62rem;font-family:'DM Mono',monospace;color:var(--muted)">Distance aller depuis chez toi · modifiable</div>
+
     </div>
 
     <div class="result" id="result-box" style="display:none">
@@ -594,12 +604,17 @@
                 <div class="form-group"><label class="form-label">Panneau moyen (€)</label><input class="form-input" id="t-moyen" type="number" min="0" step="0.5"></div>
                 <div class="form-group"><label class="form-label">Grande vitrine (€)</label><input class="form-input" id="t-grand" type="number" min="0" step="0.5"></div>
                 <div class="form-group"><label class="form-label">Minimum passage (€)</label><input class="form-input" id="t-minimum" type="number" min="0" step="1"></div>
-                <div class="form-group"><label class="form-label">Intérieur (+%)</label><input class="form-input" id="t-majInt" type="number" min="0" step="5"></div>
+                <div class="form-group"><label class="form-label">Intérieur (% du prix ext.)</label><input class="form-input" id="t-majInt" type="number" min="0" step="5"></div>
                 <div class="form-group"><label class="form-label">Hauteur (+%)</label><input class="form-input" id="t-majHaut" type="number" min="0" step="5"></div>
                 <div class="form-group"><label class="form-label">Très sale (+%)</label><input class="form-input" id="t-majSale" type="number" min="0" step="5"></div>
                 <div class="form-group"><label class="form-label">Remise récurrent (−%)</label><input class="form-input" id="t-remiseRec" type="number" min="0" max="90" step="5"></div>
                 <div class="form-group"><label class="form-label">Taux horaire visé (€/h)</label><input class="form-input" id="t-taux" type="number" min="0" step="1"></div>
                 <div class="form-group"><label class="form-label">Arrondi (€)</label><input class="form-input" id="t-arrondi" type="number" min="1" step="1"></div>
+                <div class="form-group" style="grid-column:1/-1;margin-top:6px"><label class="form-label" style="color:var(--accent)">Déplacement</label></div>
+                <div class="form-group"><label class="form-label">Prix du litre (€)</label><input class="form-input" id="t-prixLitre" type="number" min="0" step="0.01"></div>
+                <div class="form-group"><label class="form-label">Conso (L/100 km)</label><input class="form-input" id="t-conso" type="number" min="0" step="0.1"></div>
+                <div class="form-group"><label class="form-label">Petit billet en plus (+%)</label><input class="form-input" id="t-margeRoute" type="number" min="0" step="10"></div>
+                <div class="form-group"><label class="form-label">Gratuit jusqu'à (km)</label><input class="form-input" id="t-kmGratuit" type="number" min="0" step="1"></div>
             </div>
         </div>
         <div class="modal-footer" style="display:flex;gap:8px">
@@ -898,7 +913,7 @@ const LOGO_PDF = 'iVBORw0KGgoAAAANSUhEUgAAASwAAADICAYAAABS39xVAACZlElEQVR42sW9d7
 
 // -- CONFIG ------------------------------------------------
 // -- GRILLE TARIFAIRE BOUTIQUES ------------------------------
-const TARIF_DEFAUT = { petit: 6, moyen: 9, grand: 13, minimum: 20, majInt: 50, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5 };
+const TARIF_DEFAUT = { petit: 6, moyen: 9, grand: 13, minimum: 20, majInt: 50, majHaut: 50, majSale: 30, remiseRec: 20, taux: 25, arrondi: 5, prixLitre: 1.80, conso: 7, margeRoute: 50, kmGratuit: 5 };
 const TARIF_KEY = 'vitro_tarif_boutique';
 let TARIF = (() => {
     try { return { ...TARIF_DEFAUT, ...(JSON.parse(localStorage.getItem(TARIF_KEY)) || {}) }; }
@@ -1068,41 +1083,62 @@ function setFreq(f) {
 
 function fmt(n) { return n.toFixed(2).replace('.', ',') + ' €'; }
 
+// Frais de déplacement : essence aller-retour + petit billet, arrondi à l'euro supérieur
+function fraisRoute(km) {
+    const T = TARIF;
+    if (!km || km <= T.kmGratuit) return { frais: 0, essence: 0 };
+    const essence = km * 2 * T.conso / 100 * T.prixLitre;
+    return { frais: Math.ceil(essence * (1 + T.margeRoute / 100) - 1e-9), essence };
+}
+
 // Calcule le devis à partir de l'état du calculateur
 function computeDevis() {
     const T = TARIF;
-    const qty = {};
-    TYPES.forEach(id => qty[id] = Math.max(0, parseInt(document.getElementById('qty-' + id).value) || 0));
-    const nb = qty.petit + qty.moyen + qty.grand;
+    const ext = {}, int = {};
+    TYPES.forEach(id => {
+        ext[id] = Math.max(0, parseInt(document.getElementById('qty-' + id).value) || 0);
+        int[id] = Math.max(0, parseInt(document.getElementById('qty-int-' + id).value) || 0);
+    });
+    const nbExt = ext.petit + ext.moyen + ext.grand;
+    const nbInt = int.petit + int.moyen + int.grand;
+    const nb = nbExt + nbInt;
     const hautEl = document.getElementById('qty-haut');
     if ((parseInt(hautEl.value) || 0) > nb) hautEl.value = nb;
     const haut = Math.max(0, Math.min(nb, parseInt(hautEl.value) || 0));
-    const interieur = document.getElementById('opt-int').checked;
     const sale = document.getElementById('opt-sale').checked;
-    const route = parseFloat(document.getElementById('route').value) || 0;
+    const km = Math.max(0, parseFloat(document.getElementById('km-input').value) || 0);
+    const { frais: route } = fraisRoute(km);
     const rec = calcFreq !== 'ponctuel';
-    const fInt = interieur ? 1 + T.majInt / 100 : 1;
+    const fInt = T.majInt / 100;
+    const TEMPS_INT = 0.8;
 
     const lignes = [];
     let base = 0, temps = 0;
     TYPES.forEach(id => {
-        if (!qty[id]) return;
-        const pu = T[id] * fInt;
-        const sub = qty[id] * pu;
-        base += sub;
-        temps += qty[id] * PANNEAUX[id].temps * (interieur ? 1.8 : 1);
-        lignes.push({ label: PANNEAUX[id].label + (interieur ? ' (int. + ext.)' : ' (ext.)'), qty: qty[id], pu, sub, gratte: 0 });
+        if (ext[id]) {
+            const pu = T[id], sub = ext[id] * pu;
+            base += sub; temps += ext[id] * PANNEAUX[id].temps;
+            lignes.push({ label: PANNEAUX[id].label + ' — ext.', qty: ext[id], pu, sub, gratte: 0 });
+        }
+    });
+    TYPES.forEach(id => {
+        if (int[id]) {
+            const pu = T[id] * fInt, sub = int[id] * pu;
+            base += sub; temps += int[id] * PANNEAUX[id].temps * TEMPS_INT;
+            lignes.push({ label: PANNEAUX[id].label + ' — int.', qty: int[id], pu, sub, gratte: 0 });
+        }
     });
 
-    // Hauteur : appliquée aux plus grands panneaux d'abord
+    // Hauteur : appliquée aux faces extérieures les plus grandes d'abord, puis aux intérieures
     let hautSup = 0, reste = haut;
-    ['grand', 'moyen', 'petit'].forEach(id => {
-        const n = Math.min(reste, qty[id]);
+    const ordre = [['grand', ext, 1, 1], ['moyen', ext, 1, 1], ['petit', ext, 1, 1], ['grand', int, fInt, TEMPS_INT], ['moyen', int, fInt, TEMPS_INT], ['petit', int, fInt, TEMPS_INT]];
+    ordre.forEach(([id, src, fp, ft]) => {
+        const n = Math.min(reste, src[id]);
         reste -= n;
-        hautSup += n * T[id] * fInt * T.majHaut / 100;
-        temps += n * PANNEAUX[id].temps * (interieur ? 1.8 : 1) * 0.5;
+        hautSup += n * T[id] * fp * T.majHaut / 100;
+        temps += n * PANNEAUX[id].temps * ft * 0.5;
     });
-    if (hautSup > 0) lignes.push({ label: 'Hauteur, ' + haut + ' panneau' + (haut > 1 ? 'x' : '') + ' (+' + T.majHaut + ' %)', qty: null, sub: hautSup });
+    if (hautSup > 0) lignes.push({ label: 'Hauteur, ' + haut + ' face' + (haut > 1 ? 's' : '') + ' (+' + T.majHaut + ' %)', qty: null, sub: hautSup });
 
     const brut = base + hautSup;
     const saleSup = sale ? brut * T.majSale / 100 : 0;
@@ -1111,12 +1147,11 @@ function computeDevis() {
     const fRec = rec ? 1 - T.remiseRec / 100 : 1;
     const remise = rec ? -(brut + saleSup) * T.remiseRec / 100 : 0;
     if (remise) lignes.push({ label: 'Remise passage régulier (−' + T.remiseRec + ' %)', qty: null, sub: remise, discount: true });
-    if (route > 0) lignes.push({ label: 'Frais de route', qty: null, sub: route });
+    if (route > 0) lignes.push({ label: 'Déplacement (' + (km * 2) + ' km A/R)', qty: null, sub: route });
 
     const calcTotal = (montant) => {
         if (nb === 0) return 0;
-        const avecMin = Math.max(montant, T.minimum);
-        return ceilTo(avecMin, T.arrondi || 1);
+        return ceilTo(Math.max(montant, T.minimum), T.arrondi || 1);
     };
     const avantArrondi = (brut + saleSup) * fRec + route;
     const total = calcTotal(avantArrondi);
@@ -1128,7 +1163,7 @@ function computeDevis() {
 
     if (nb > 0) temps += 5; // installation / rangement
     temps = Math.round(temps);
-    return { nb, qty, haut, interieur, sale, route, freq: calcFreq, lignes, total, totalRecurrent, temps, remise: 0 };
+    return { nb, ext, int, haut, sale, km, route, freq: calcFreq, lignes, total, totalRecurrent, temps, remise: 0 };
 }
 
 function calc() {
@@ -1154,6 +1189,13 @@ function calc() {
     document.getElementById('freq-sub').textContent = d.freq === 'ponctuel'
         ? 'Passage unique — plein tarif'
         : FREQ_LABELS[d.freq] + ' — remise ' + T.remiseRec + ' %';
+
+    const fr = fraisRoute(d.km);
+    document.getElementById('route-amount-display').textContent = fr.frais > 0 ? '+' + fr.frais + ' €' : 'Gratuit';
+    document.getElementById('route-amount-display').style.color = fr.frais > 0 ? 'var(--accent2)' : 'var(--accent)';
+    document.getElementById('route-zone-label').textContent = !d.km ? 'Sur place — gratuit'
+        : d.km <= T.kmGratuit ? d.km + ' km — gratuit (≤ ' + T.kmGratuit + ' km)'
+        : (d.km * 2) + ' km A/R · essence ≈ ' + fr.essence.toFixed(2).replace('.', ',') + ' €';
 
     const bd = document.getElementById('breakdown');
     if (d.nb === 0) { bd.style.display = 'none'; bd.innerHTML = ''; }
@@ -1190,89 +1232,82 @@ function calc() {
 
 // -- FRAIS DE ROUTE ZONES --------------------------------
 const ZONES_VILLE = {
-    // Zone 0 - Gratuit (~0-5km)
-    'sallanches': { frais: 0, label: 'Sallanches — gratuit' },
-    'cordon': { frais: 0, label: 'Cordon — gratuit' },
-    'domancy': { frais: 0, label: 'Domancy — gratuit' },
-    'passy': { frais: 0, label: 'Passy — gratuit' },
-    'chedde': { frais: 0, label: 'Chédde — gratuit' },
-    'demi-quartier': { frais: 0, label: 'Demi-Quartier — gratuit' },
-    'combloux': { frais: 0, label: 'Combloux — gratuit' },
-
-    // Zone 1 - +5€ (~5-20km)
-    'megeve': { frais: 5, label: 'Megève — +5€' },
-    'megève': { frais: 5, label: 'Megève — +5€' },
-    'saint-gervais': { frais: 5, label: 'Saint-Gervais — +5€' },
-    'saint gervais': { frais: 5, label: 'Saint-Gervais — +5€' },
-    'magland': { frais: 5, label: 'Magland — +5€' },
-    'servoz': { frais: 5, label: 'Servoz — +5€' },
-    'reposoir': { frais: 5, label: 'Le Reposoir — +5€' },
-    'le reposoir': { frais: 5, label: 'Le Reposoir — +5€' },
-    'praz-sur-arly': { frais: 5, label: 'Praz-sur-Arly — +5€' },
-    'praz sur arly': { frais: 5, label: 'Praz-sur-Arly — +5€' },
-    'araches': { frais: 5, label: 'Arâches-la-Frasse — +5€' },
-    'araches-la-frasse': { frais: 5, label: 'Arâches-la-Frasse — +5€' },
-    'cluses': { frais: 5, label: 'Cluses — +5€' },
-    'scionzier': { frais: 5, label: 'Scionzier — +5€' },
-    'nancy-sur-cluses': { frais: 5, label: 'Nancy-sur-Cluses — +5€' },
-    'marnaz': { frais: 5, label: 'Marnaz — +5€' },
-    'les houches': { frais: 5, label: 'Les Houches — +5€' },
-    'houches': { frais: 5, label: 'Les Houches — +5€' },
-    'thyez': { frais: 5, label: 'Thyez — +5€' },
-    'taninges': { frais: 5, label: 'Taninges — +5€' },
-    'morillon': { frais: 5, label: 'Morillon — +5€' },
-    'samoens': { frais: 5, label: 'Samoëns — +5€' },
-    'samoëns': { frais: 5, label: 'Samoëns — +5€' },
-    'sixt-fer-a-cheval': { frais: 5, label: 'Sixt-Fer-à-Cheval — +5€' },
-    'les carroz': { frais: 5, label: 'Les Carroz — +5€' },
-    'flaine': { frais: 5, label: 'Flaine — +5€' },
-
-    // Zone 2 - +10€ (~20-35km)
-    'chamonix': { frais: 10, label: 'Chamonix — +10€' },
-    'chamonix-mont-blanc': { frais: 10, label: 'Chamonix — +10€' },
-    'argentiere': { frais: 10, label: 'Argentière — +10€' },
-    'argentière': { frais: 10, label: 'Argentière — +10€' },
-    'les contamines': { frais: 10, label: 'Les Contamines — +10€' },
-    'contamines': { frais: 10, label: 'Les Contamines — +10€' },
-    'notre-dame-de-bellecombe': { frais: 10, label: 'N-D-de-Bellecombe — +10€' },
-    'flumet': { frais: 10, label: 'Flumet — +10€' },
-    'bonneville': { frais: 10, label: 'Bonneville — +10€' },
-    'saint-pierre-en-faucigny': { frais: 10, label: 'Saint-Pierre-en-Faucigny — +10€' },
-    'marignier': { frais: 10, label: 'Marignier — +10€' },
-    'saint-jeoire': { frais: 10, label: 'Saint-Jeoire — +10€' },
-    'thoiry': { frais: 10, label: 'Thoiry — +10€' },
-    'thones': { frais: 10, label: 'Thônes — +10€' },
-    'thônes': { frais: 10, label: 'Thônes — +10€' },
-    'verchaix': { frais: 10, label: 'Verchaix — +10€' },
-    'mieussy': { frais: 10, label: 'Mieussy — +10€' },
-    'roche-sur-foron': { frais: 10, label: 'La Roche-sur-Foron — +10€' },
-    'la roche-sur-foron': { frais: 10, label: 'La Roche-sur-Foron — +10€' },
-    'viuz-en-sallaz': { frais: 10, label: 'Viuz-en-Sallaz — +10€' },
-    'bonne': { frais: 10, label: 'Bonne — +10€' },
-    'les gets': { frais: 10, label: 'Les Gets — +10€' },
-    'morzine': { frais: 10, label: 'Morzine — +10€' },
-    'avoriaz': { frais: 10, label: 'Avoriaz — +10€' },
-    'crest-voland': { frais: 10, label: 'Crest-Voland — +10€' },
-    'les saisies': { frais: 10, label: 'Les Saisies — +10€' },
-
-    // Zone 3 - +15€ (35km+)
-    'annemasse': { frais: 15, label: 'Annemasse — +15€' },
-    'annecy': { frais: 15, label: 'Annecy — +15€' },
-    'thonon': { frais: 15, label: 'Thonon-les-Bains — +15€' },
-    'thonon-les-bains': { frais: 15, label: 'Thonon-les-Bains — +15€' },
-    'evian': { frais: 15, label: 'Évian-les-Bains — +15€' },
-    'évian': { frais: 15, label: 'Évian-les-Bains — +15€' },
-    'evian-les-bains': { frais: 15, label: 'Évian-les-Bains — +15€' },
-    'fillinges': { frais: 15, label: 'Fillinges — +15€' },
-    'viuz-la-chiesaz': { frais: 15, label: 'Viuz-la-Chiésaz — +15€' },
-    'faverges': { frais: 15, label: 'Faverges — +15€' },
-    'la clusaz': { frais: 15, label: 'La Clusaz — +15€' },
-    'clusaz': { frais: 15, label: 'La Clusaz — +15€' },
-    'grand-bornand': { frais: 15, label: 'Le Grand-Bornand — +15€' },
-    'le grand-bornand': { frais: 15, label: 'Le Grand-Bornand — +15€' },
-    'megeve-mont-blanc': { frais: 15, label: "Val d'Arly — +15€" },
-    'geneve': { frais: 15, label: 'Genève — +15€' },
-    'genève': { frais: 15, label: 'Genève — +15€' },
+    // Distance route aller depuis Sallanches (approximative, modifiable dans le calculateur)
+    'sallanches': { km: 0, label: 'Sallanches' },
+    'cordon': { km: 5, label: 'Cordon' },
+    'domancy': { km: 3, label: 'Domancy' },
+    'passy': { km: 5, label: 'Passy' },
+    'chedde': { km: 6, label: 'Chédde' },
+    'demi-quartier': { km: 10, label: 'Demi-Quartier' },
+    'combloux': { km: 7, label: 'Combloux' },
+    'megeve': { km: 12, label: 'Megève' },
+    'megève': { km: 12, label: 'Megève' },
+    'saint-gervais': { km: 10, label: 'Saint-Gervais' },
+    'saint gervais': { km: 10, label: 'Saint-Gervais' },
+    'magland': { km: 8, label: 'Magland' },
+    'servoz': { km: 13, label: 'Servoz' },
+    'reposoir': { km: 20, label: 'Le Reposoir' },
+    'le reposoir': { km: 20, label: 'Le Reposoir' },
+    'praz-sur-arly': { km: 17, label: 'Praz-sur-Arly' },
+    'praz sur arly': { km: 17, label: 'Praz-sur-Arly' },
+    'araches': { km: 20, label: 'Arâches-la-Frasse' },
+    'araches-la-frasse': { km: 20, label: 'Arâches-la-Frasse' },
+    'cluses': { km: 17, label: 'Cluses' },
+    'scionzier': { km: 20, label: 'Scionzier' },
+    'nancy-sur-cluses': { km: 22, label: 'Nancy-sur-Cluses' },
+    'marnaz': { km: 21, label: 'Marnaz' },
+    'les houches': { km: 18, label: 'Les Houches' },
+    'houches': { km: 18, label: 'Les Houches' },
+    'thyez': { km: 21, label: 'Thyez' },
+    'taninges': { km: 30, label: 'Taninges' },
+    'morillon': { km: 32, label: 'Morillon' },
+    'samoens': { km: 38, label: 'Samoëns' },
+    'samoëns': { km: 38, label: 'Samoëns' },
+    'sixt-fer-a-cheval': { km: 45, label: 'Sixt-Fer-à-Cheval' },
+    'les carroz': { km: 24, label: 'Les Carroz' },
+    'flaine': { km: 32, label: 'Flaine' },
+    'chamonix': { km: 25, label: 'Chamonix' },
+    'chamonix-mont-blanc': { km: 25, label: 'Chamonix' },
+    'argentiere': { km: 33, label: 'Argentière' },
+    'argentière': { km: 33, label: 'Argentière' },
+    'les contamines': { km: 19, label: 'Les Contamines' },
+    'contamines': { km: 19, label: 'Les Contamines' },
+    'notre-dame-de-bellecombe': { km: 24, label: 'N-D-de-Bellecombe' },
+    'flumet': { km: 20, label: 'Flumet' },
+    'bonneville': { km: 30, label: 'Bonneville' },
+    'saint-pierre-en-faucigny': { km: 35, label: 'Saint-Pierre-en-Faucigny' },
+    'marignier': { km: 27, label: 'Marignier' },
+    'saint-jeoire': { km: 35, label: 'Saint-Jeoire' },
+    'thoiry': { km: 75, label: 'Thoiry' },
+    'thones': { km: 50, label: 'Thônes' },
+    'thônes': { km: 50, label: 'Thônes' },
+    'verchaix': { km: 36, label: 'Verchaix' },
+    'mieussy': { km: 35, label: 'Mieussy' },
+    'roche-sur-foron': { km: 40, label: 'La Roche-sur-Foron' },
+    'la roche-sur-foron': { km: 40, label: 'La Roche-sur-Foron' },
+    'viuz-en-sallaz': { km: 42, label: 'Viuz-en-Sallaz' },
+    'bonne': { km: 45, label: 'Bonne' },
+    'les gets': { km: 42, label: 'Les Gets' },
+    'morzine': { km: 47, label: 'Morzine' },
+    'avoriaz': { km: 58, label: 'Avoriaz' },
+    'crest-voland': { km: 26, label: 'Crest-Voland' },
+    'les saisies': { km: 32, label: 'Les Saisies' },
+    'annemasse': { km: 52, label: 'Annemasse' },
+    'annecy': { km: 65, label: 'Annecy' },
+    'thonon': { km: 75, label: 'Thonon-les-Bains' },
+    'thonon-les-bains': { km: 75, label: 'Thonon-les-Bains' },
+    'evian': { km: 85, label: 'Évian-les-Bains' },
+    'évian': { km: 85, label: 'Évian-les-Bains' },
+    'evian-les-bains': { km: 85, label: 'Évian-les-Bains' },
+    'fillinges': { km: 45, label: 'Fillinges' },
+    'viuz-la-chiesaz': { km: 75, label: 'Viuz-la-Chiésaz' },
+    'faverges': { km: 50, label: 'Faverges' },
+    'la clusaz': { km: 38, label: 'La Clusaz' },
+    'clusaz': { km: 38, label: 'La Clusaz' },
+    'grand-bornand': { km: 40, label: 'Le Grand-Bornand' },
+    'le grand-bornand': { km: 40, label: 'Le Grand-Bornand' },
+    'geneve': { km: 58, label: 'Genève' },
+    'genève': { km: 58, label: 'Genève' },
 };
 
 function normalizeVille(str) {
@@ -1311,8 +1346,8 @@ function villeAutocomplete(val) {
         const z = ZONES_VILLE[k];
         return `<div onmousedown="event.preventDefault();selectVille('${k}')" style="padding:10px 14px;cursor:pointer;font-size:0.85rem;border-bottom:1px solid var(--border);transition:background 0.1s;display:flex;justify-content:space-between;align-items:center"
             onmouseover="this.style.background='rgba(26,159,212,0.1)'" onmouseout="this.style.background='none'">
-            <span>${z.label.split('—')[0].trim()}</span>
-            <span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:${z.frais===0?'var(--accent)':'var(--accent2)'}">${z.frais===0?'Gratuit':'+'+z.frais+'€'}</span>
+            <span>${z.label}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:${fraisRoute(z.km).frais===0?'var(--accent)':'var(--accent2)'}">≈${z.km} km · ${fraisRoute(z.km).frais===0?'gratuit':'+'+fraisRoute(z.km).frais+' €'}</span>
         </div>`;
     }).join('');
     suggestions.style.display = 'block';
@@ -1324,16 +1359,10 @@ function showVilleSuggestions() {
 
 function selectVille(key) {
     const z = ZONES_VILLE[key];
-    document.getElementById('ville-input').value = z.label.split('—')[0].trim();
-    document.getElementById('route').value = z.frais;
-    document.getElementById('route-zone-label').textContent = z.label;
-    document.getElementById('route-amount-display').textContent = z.frais > 0 ? '+' + z.frais + ' €' : 'Gratuit';
-    document.getElementById('route-amount-display').style.color = z.frais > 0 ? 'var(--accent2)' : 'var(--accent)';
+    document.getElementById('ville-input').value = z.label;
+    document.getElementById('km-input').value = z.km;
     document.getElementById('ville-suggestions').style.display = 'none';
     calc();
-    // Force result visible
-    const rb = document.getElementById('result-box');
-    if (rb && z.frais > 0) rb.style.display = 'block';
 }
 
 // Close suggestions on outside click
@@ -1346,7 +1375,7 @@ document.addEventListener('click', e => {
 
 
 // -- RÉGLAGES TARIFS ----------------------------------------
-const TARIF_FIELDS = ['petit', 'moyen', 'grand', 'minimum', 'majInt', 'majHaut', 'majSale', 'remiseRec', 'taux', 'arrondi'];
+const TARIF_FIELDS = ['petit', 'moyen', 'grand', 'minimum', 'majInt', 'majHaut', 'majSale', 'remiseRec', 'taux', 'arrondi', 'prixLitre', 'conso', 'margeRoute', 'kmGratuit'];
 function fillTarifForm(t) { TARIF_FIELDS.forEach(k => document.getElementById('t-' + k).value = t[k]); }
 function openTarifModal() { fillTarifForm(TARIF); document.getElementById('tarif-modal').classList.add('open'); }
 function closeTarifModal() { document.getElementById('tarif-modal').classList.remove('open'); }
@@ -1367,22 +1396,19 @@ function saveTarif() {
     showToast('Grille enregistrée', 'success');
 }
 function updatePriceLabels() {
-    TYPES.forEach(id => { document.getElementById('lp-' + id).textContent = String(TARIF[id]).replace('.', ',') + ' € / panneau'; });
-    document.getElementById('lp-int').textContent = '+' + TARIF.majInt + ' % sur les panneaux';
-    document.getElementById('lp-haut').textContent = '+' + TARIF.majHaut + ' % sur ces panneaux';
+    const e = n => (Math.round(n * 100) / 100).toString().replace('.', ',') + ' €';
+    TYPES.forEach(id => { document.getElementById('lp-' + id).textContent = 'ext. ' + e(TARIF[id]) + ' · int. ' + e(TARIF[id] * TARIF.majInt / 100); });
+    document.getElementById('lp-haut').textContent = '+' + TARIF.majHaut + ' % sur ces faces';
     document.getElementById('lp-sale').textContent = '+' + TARIF.majSale + ' % · ce passage seulement';
 }
 document.addEventListener('DOMContentLoaded', () => { updatePriceLabels(); calc(); });
 
 function resetCalc() {
-    [...TYPES, 'haut'].forEach(id => document.getElementById('qty-' + id).value = 0);
-    document.getElementById('opt-int').checked = false;
+    TYPES.forEach(id => { document.getElementById('qty-' + id).value = 0; document.getElementById('qty-int-' + id).value = 0; });
+    document.getElementById('qty-haut').value = 0;
     document.getElementById('opt-sale').checked = false;
-    document.getElementById('route').value = 0;
+    document.getElementById('km-input').value = 0;
     document.getElementById('ville-input').value = '';
-    document.getElementById('route-zone-label').textContent = 'Sallanches — gratuit';
-    document.getElementById('route-amount-display').textContent = '0 €';
-    document.getElementById('route-amount-display').style.color = 'var(--accent)';
     setFreq('ponctuel');
 }
 
